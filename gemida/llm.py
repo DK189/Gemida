@@ -19,7 +19,7 @@ Task: For each function, provide analysis:
   * If the function already has a meaningful name or has an existing comment, do not add a new comment.
 
 Rules:
-- Output must be valid JSON object only, without explanations or markdown or escape.
+- Output must be valid minified JSON object only, without explanations or markdown or escape.
 - Output format:
 {{
   "old_function_name": {{

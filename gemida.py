@@ -7,6 +7,14 @@ from gemida.core import process_current_function, process_all_functions
 
 API_KEY = os.getenv("GEMIDA_API_KEY")
 
+def refresh_pseudocode():
+    cur_view = ida_kernwin.get_current_viewer()
+    if cur_view:
+        vdui = ida_hexrays.get_widget_vdui(cur_view)
+        if vdui:
+            vdui.refresh_ctext()
+            vdui.refresh_view(True)
+
 class GemidaDialog(QtWidgets.QDialog):
     def __init__(self):
         super().__init__()
@@ -58,8 +66,8 @@ class GemidaDialog(QtWidgets.QDialog):
             ida_kernwin.hide_wait_box()
             self.show()
             idaapi.msg("\n[Gemida] Analysis complete.\n")
-            idaapi.execute_sync(idaapi.refresh_idaview_anyway, idaapi.MFF_READ)
-            idaapi.execute_sync(idaapi.refresh_idaview, idaapi.MFF_READ)
+            idaapi.refresh_idaview_anyway()
+            refresh_pseudocode()
 
     def _do_analyze_all(self):
         try:
@@ -71,8 +79,8 @@ class GemidaDialog(QtWidgets.QDialog):
             ida_kernwin.hide_wait_box()
             self.show()
             idaapi.msg("\n[Gemida] Analysis complete.\n")
-            idaapi.execute_sync(idaapi.refresh_idaview_anyway, idaapi.MFF_READ)
-            idaapi.execute_sync(idaapi.refresh_idaview, idaapi.MFF_READ)
+            idaapi.refresh_idaview_anyway()
+            refresh_pseudocode()
 
 
 def show_gemida_form():
