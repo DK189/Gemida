@@ -7,6 +7,10 @@ import ida_hexrays
 # -----------------------------------------------------------------------------
 def _safe_decompile(ea):
     try:
+        name = idc.get_func_name(ea)
+        # Bỏ qua hàm chưa rename (sub_XXXX, nullsub_XX)
+        if not (name.startswith("sub_") or name.startswith("nullsub_")):
+            return None
         return ida_hexrays.decompile(ea)
     except Exception:
         return None
