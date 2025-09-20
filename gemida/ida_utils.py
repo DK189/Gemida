@@ -86,14 +86,21 @@ def group_functions_by_tokens(funcs, max_tokens=200_000):
     return groups
 
 # -----------------------------------------------------------------------------
-# Rename function safely
+# Rename function safely, retry with suffix if name already exists
 # -----------------------------------------------------------------------------
 def rename_function(old_name, new_name):
     if old_name.startswith("sub_") or old_name.startswith("nullsub_"):
         ea = idc.get_name_ea_simple(old_name)
         if ea != idc.BADADDR:
-            idaapi.msg(f"[Gemida] Renaming {old_name} -> {new_name}\n")
-            idc.set_name(ea, new_name, idc.SN_AUTO)
+            base = new_name
+            suffix = 0
+            while True:
+                try_name = base if suffix == 0 else f"{base}_{suffix:02d}"
+                if idc.set_name(ea, try_name, idc.SN_AUTO):
+                    idaapi.msg(f"[Gemida] Renamed {old_name} -> {try_name}\n")
+                    break
+                else:
+                    suffix += 1
 
 # -----------------------------------------------------------------------------
 # Add comment to function
